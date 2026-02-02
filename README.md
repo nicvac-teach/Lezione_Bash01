@@ -25,6 +25,18 @@ Lavorerai sulla cartella `esercizi/` che contiene un albero di directory già pr
 
 ---
 
+## Prima di iniziare
+
+Per preparare l'ambiente di lavoro, 
+apri il terminale ed esegui:
+
+```bash
+./setup.sh
+```
+
+---
+
+
 ## Blocco 1 - Orientarsi nel filesystem
 
 ### Obiettivo
@@ -582,13 +594,13 @@ ls -l /workspaces/Lezione_Bash01/esercizi/permessi
 # -rw-r--r-- 1 codespace codespace  ... non_eseguibile.sh
 # -rw------- 1 codespace codespace  ... privato.txt
 # -rw-r--r-- 1 codespace codespace  ... pubblico.txt
-# -r-------- 1 codespace codespace  ... segreto.txt
+# ---------- 1 codespace codespace  ... segreto.txt
 ```
 
 Differenze:
 - `eseguibile.sh` ha la `x` (permesso di esecuzione)
 - `privato.txt` ha `rw-------` (solo il proprietario può leggere/scrivere)
-- `segreto.txt` ha `r--------` (solo il proprietario può leggere, nessuno può scrivere)
+- `segreto.txt` ha `----------` (nessun permesso per nessuno)
 
 </details>
 
@@ -658,11 +670,9 @@ Risposte:
    - Others: `---` (nessun permesso)
    - **Solo il proprietario può leggerlo e modificarlo**
 
-3. `segreto.txt` ha `-r--------`:
-   - Owner: `r--` (solo lettura)
-   - Group: `---` (nessun permesso)
-   - Others: `---` (nessun permesso)
-   - **Solo il proprietario può leggerlo, nessuno può modificarlo**
+3. `segreto.txt` ha `----------`:
+   - Nessuno ha permessi (nemmeno il proprietario!)
+   - Per accedervi, bisogna prima modificare i permessi
 
 </details>
 
@@ -693,8 +703,8 @@ cat privato.txt
 # ✅ Funziona (sei il proprietario)
 
 cat segreto.txt
-# Output: File segreto - solo lettura per il proprietario
-# ✅ Funziona (sei il proprietario e hai il permesso di lettura)
+# Errore: Permission denied
+# ❌ Non funziona (nessun permesso di lettura)
 
 ./eseguibile.sh
 # Output: Sono eseguibile!
@@ -778,10 +788,9 @@ chmod u+x,g-w file.sh       # combinazioni multiple
 
 Vai nella cartella `esercizi/permessi`:
 
-1. Prova a scrivere in `segreto.txt` con `echo "test" >> segreto.txt`. Cosa succede?
-2. Aggiungi il permesso di scrittura per il proprietario
-3. Ora prova di nuovo a scrivere nel file
-4. Verifica il contenuto con `cat`
+1. Prova a leggere `segreto.txt` con `cat`. Cosa succede?
+2. Aggiungi il permesso di lettura per il proprietario
+3. Ora prova di nuovo a leggere il file
 
 <details>
 <summary>Solo dopo aver svolto l'esercizio, apri qui per vedere la soluzione</summary>
@@ -789,17 +798,13 @@ Vai nella cartella `esercizi/permessi`:
 ```bash
 cd /workspaces/Lezione_Bash01/esercizi/permessi
 
-echo "test" >> segreto.txt
+cat segreto.txt
 # Errore: Permission denied
 
-chmod u+w segreto.txt
-
-echo "test" >> segreto.txt
+chmod u+r segreto.txt
 
 cat segreto.txt
-# Output:
-# File segreto - solo lettura per il proprietario
-# test
+# Output: File segreto - nessun permesso
 ```
 
 </details>
@@ -924,7 +929,7 @@ rm -r azienda
 Esplora la cartella `esercizi` e rispondi:
 
 1. Trova tutti i file che hanno il permesso di esecuzione
-2. Trova il file che ha solo il permesso di lettura per il proprietario
+2. Trova il file che non ha nessun permesso
 
 <details>
 <summary>Solo dopo aver svolto l'esercizio, apri qui per vedere la soluzione</summary>
@@ -935,8 +940,8 @@ ls -l esercizi/permessi/
 # File con permesso di esecuzione (hanno la x):
 # -rwxr-xr-x ... eseguibile.sh
 
-# File con solo lettura per il proprietario:
-# -r-------- ... segreto.txt
+# File senza nessun permesso:
+# ---------- ... segreto.txt
 ```
 
 </details>
